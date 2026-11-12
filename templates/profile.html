@@ -1,0 +1,34 @@
+﻿{% extends 'base.html' %}
+{% block content %}
+<div class="card p-4 shadow-sm">
+    <h3>Профіль користувача</h3>
+    <ul class="list-group list-group-flush mb-4">
+        <li class="list-group-item"><strong>Логін:</strong> {{ current_user.username }}</li>
+        <li class="list-group-item"><strong>Email:</strong> {{ current_user.email }}</li>
+        <li class="list-group-item"><strong>Роль (RBAC):</strong> <span class="badge bg-secondary">{{ current_user.role }}</span></li>
+        <li class="list-group-item">
+            <strong>Статус активації:</strong>
+            {% if current_user.is_active_account %}
+                <span class="badge bg-success">Активовано</span>
+            {% else %}
+                <span class="badge bg-warning text-dark">Не активовано (перевірте посилання активації)</span>
+            {% endif %}
+        </li>
+    </ul>
+
+    <h5>Двофакторна автентифікація (2FA TOTP)</h5>
+    {% if current_user.two_factor_enabled %}
+        <p class="text-success">2FA наразі <strong>увімкнено</strong>.</p>
+        <form method="POST" action="{{ url_for('toggle_2fa') }}">
+            <button type="submit" class="btn btn-danger">Вимкнути 2FA</button>
+        </form>
+    {% else %}
+        <p>Відскануйте QR-код у додатку Google Authenticator та введіть згенерований код для активації:</p>
+        <img src="data:image/png;base64,{{ qr_b64 }}" class="mb-3 border" alt="QR Code">
+        <form method="POST" action="{{ url_for('toggle_2fa') }}" class="d-flex gap-2" style="max-width: 300px;">
+            <input type="text" name="otp_code" class="form-control" placeholder="Код з додатку" required>
+            <button type="submit" class="btn btn-success">Увімкнути</button>
+        </form>
+    {% endif %}
+</div>
+{% endblock %}

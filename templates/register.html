@@ -1,0 +1,46 @@
+﻿{% extends 'base.html' %}
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-5 card p-4 shadow-sm">
+        <h3 class="mb-3">Реєстрація</h3>
+        <form method="POST">
+            <div class="mb-3">
+                <label class="form-label">Логін</label>
+                <input type="text" name="username" class="form-control" required>
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Email</label>
+                <input type="email" name="email" class="form-control" required>
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Пароль</label>
+                <input type="password" name="password" id="password" class="form-control" required onkeyup="checkStrength()">
+                <div class="progress mt-2" style="height: 6px;">
+                    <div id="strength-bar" class="progress-bar" role="progressbar" style="width: 0%;"></div>
+                </div>
+                <small id="strength-text" class="text-muted">Мінімум 8 символів, велика/мала літери, цифра, спецсимвол.</small>
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Введіть код з картинки (CAPTCHA)</label><br>
+                <img src="data:image/png;base64,{{ captcha_img }}" class="mb-2 border rounded" alt="CAPTCHA">
+                <input type="text" name="captcha" class="form-control" required autocomplete="off">
+            </div>
+            <button type="submit" class="btn btn-primary w-100">Зареєструватися</button>
+        </form>
+    </div>
+</div>
+<script>
+function checkStrength() {
+    const val = document.getElementById('password').value;
+    const bar = document.getElementById('strength-bar');
+    let score = 0;
+    if (val.length >= 8) score += 25;
+    if (/[A-Z]/.test(val) && /[a-z]/.test(val)) score += 25;
+    if (/\d/.test(val)) score += 25;
+    if (/[^A-Za-z0-9]/.test(val)) score += 25;
+
+    bar.style.width = score + '%';
+    bar.className = 'progress-bar ' + (score < 50 ? 'bg-danger' : score < 100 ? 'bg-warning' : 'bg-success');
+}
+</script>
+{% endblock %}
